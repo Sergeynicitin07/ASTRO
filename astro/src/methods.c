@@ -56,7 +56,7 @@ double d_function(double s0, data *s) {
 
 double Bisection_method(double (*function)(double, data*), double a, double b, data *s, int i) {
     double start = get_time();
-    double time_limit = 17.0;
+    double time_limit = 2.0;
     double c;
     printf("Iteration of Bisection_method\n");
     while (1) {
@@ -109,7 +109,9 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_fun
     double x = s0;
     printf("Iteration of Newton_method\n");
     double start = get_time();
-    double time_limit = 15.0;
+    double time_limit = 1.0;
+    printf("%.15le\n", x);
+
 
     while (1) {
         double elapsed = get_time() - start;
@@ -129,9 +131,6 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_fun
 
         if (fabs(x_next - x) <= DBL_EPSILON * fabs(x_next) || x_next == x) {
             return x_next;
-        }
-        if (fabs(function(x_next, s)) >= fabs(function(x, s)) && fabs(x_next - x) < 1e-15) {
-            return x;
         }
 
         x = x_next;
