@@ -2,7 +2,6 @@
 #include "math.h"
 #include "struct.h"
 #include <stdio.h>
-#include <float.h>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -134,7 +133,7 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_fun
 
 
 
-        if (fabs(x_next - x) <= DBL_EPSILON * fabs(x_next) || x_next == x) {
+        if (x_next == x) {
             return x_next;
         }
 
