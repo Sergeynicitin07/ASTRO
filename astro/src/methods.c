@@ -36,9 +36,9 @@ double function(double s0, data *s) {
     double dw = s->declination_w, de = s->declination_e;
     double aw = s->right_ascension_w, ae = s->right_ascension_e;
     double sin_phi = sin(phi), cos_phi = cos(phi);
-    double sin_hw = sin_phi * sin(dw) + cos_phi * cos(dw) * cos(s0 - aw);
-    double sin_he = sin_phi * sin(de) + cos_phi * cos(de) * cos(s0 - ae);
-    return sin_hw - sin_he;
+    double cos_hw = sin_phi * sin(dw) + cos_phi * cos(dw) * cos(s0 - aw);
+    double cos_he = sin_phi * sin(de) + cos_phi * cos(de) * cos(s0 - ae);
+    return cos_hw - cos_he;
 }
 
 
@@ -47,10 +47,13 @@ double d_function(double s0, data *s) {
     double dw = s->declination_w, de = s->declination_e;
     double aw = s->right_ascension_w, ae = s->right_ascension_e;
     double cos_phi = cos(phi);
-    // производная от sin_hw по s0: -cos_phi * cos(dw) * sin(s0 - aw)
-    // производная от sin_he: -cos_phi * cos(de) * sin(s0 - ae)
+    // производная от cos_hw по s0: -cos_phi * cos(dw) * sin(s0 - aw)
+    // производная от cos_he: -cos_phi * cos(de) * sin(s0 - ae)
     return cos_phi * (cos(de) * sin(s0 - ae) - cos(dw) * sin(s0 - aw));
 }
+
+
+
 
 
 
