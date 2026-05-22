@@ -2,141 +2,141 @@
 #include "math.h"
 #include "struct.h"
 #include <stdio.h>
+#include <float.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <time.h>
+#endif
+
+double get_time() {
+#ifdef _WIN32
+    static LARGE_INTEGER freq;
+    static int initialized = 0;
+    LARGE_INTEGER now;
+
+    if (!initialized) {
+        QueryPerformanceFrequency(&freq);
+        initialized = 1;
+    }
+
+    QueryPerformanceCounter(&now);
+    return (double) now.QuadPart / freq.QuadPart;
+
+#else
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return now.tv_sec + now.tv_nsec / 1e9;
+#endif
+}
 
 // уравнение из геодезической астрономии (построение эфемерид для способа Цингера)
-double function (double s0, data *s) {
+double function(double s0, data *s) {
     double phi = s->phi;
-    double declination_w = s->declination_w;
-    double declination_e = s->declination_e;
-    double right_ascension_e = s->right_ascension_e;
-    double right_ascension_w = s->right_ascension_w;
-    return sin(phi) * (sin(declination_w) - sin(declination_e))
-           + cos(phi) * (cos(declination_w) * cos(s0 - right_ascension_w)
-                         - cos(declination_e) * cos(s0 - right_ascension_e));
+    double dw = s->declination_w, de = s->declination_e;
+    double aw = s->right_ascension_w, ae = s->right_ascension_e;
+    double sin_phi = sin(phi), cos_phi = cos(phi);
+    double sin_hw = sin_phi * sin(dw) + cos_phi * cos(dw) * cos(s0 - aw);
+    double sin_he = sin_phi * sin(de) + cos_phi * cos(de) * cos(s0 - ae);
+    return sin_hw - sin_he;
 }
 
 
-double Bisection_method(double (*function)(double, data*),
-                        double a, double b, data *s, int i) {
+double d_function(double s0, data *s) {
+    double phi = s->phi;
+    double dw = s->declination_w, de = s->declination_e;
+    double aw = s->right_ascension_w, ae = s->right_ascension_e;
+    double cos_phi = cos(phi);
+    // производная от sin_hw по s0: -cos_phi * cos(dw) * sin(s0 - aw)
+    // производная от sin_he: -cos_phi * cos(de) * sin(s0 - ae)
+    return cos_phi * (cos(de) * sin(s0 - ae) - cos(dw) * sin(s0 - aw));
+}
+
+
+
+double Bisection_method(double (*function)(double, data*), double a, double b, data *s, int i) {
+    double start = get_time();
+    double time_limit = 17.0;
     double c;
-    if (i == 1)
-        printf("Iteration of Bisection_method\n");
-    // для подбора стартового шага в методе сэра Ньютона
-    if (i == 0) {
-        while (fabs(b - a) > 5e-2) {
-            c = (a + b) / 2.0; // находим середину
-
-
-            if (function(a, s) * function(c, s) > 0.0) {
-                a = c;
-            } else {
-                b = c;
-            }
+    printf("Iteration of Bisection_method\n");
+    while (1) {
+        c = a + ((b - a) / 2.0);
+        double elapsed = get_time() - start;
+        if (elapsed > time_limit) {
+            printf("Shock\tand\tawe\n");
+            break;
         }
 
-    }
-    if (i == 1) {
-        while (fabs(b - a) > 1e-15) {
-            c = (a + b) / 2.0; // находим середину
+        printf("%.15le\n", c);
 
-            printf("%.15le\n", c);
+        if (c == a || c == b) {
+            break;
+        }
 
-            if (function(a, s) * function(c, s) > 0.0) {
-                a = c;
-            } else {
-                b = c;
-            }
+        if (function(a, s) * function(c, s) > 0.0) {
+            a = c;
+        } else {
+            b = c;
         }
     }
-
-    return (a + b) / 2.0;
+    return c;
 }
 
 
-double d_function (double s0, data *s) {
-    double phi = s->phi;
-    double declination_w = s->declination_w;
-    double declination_e = s->declination_e;
-    double right_ascension_e = s->right_ascension_e;
-    double right_ascension_w = s->right_ascension_w;
-    return cos(phi) * (cos(declination_e)
-                       * sin(s0 - right_ascension_e)
-                       - cos(declination_w)
-                         * sin(s0 - right_ascension_w));
-}
 
+double gets0(data *s, double *a, double *b, double *s0) {
+    int N = 1000;
+    double step = 2.0 * M_PI / N;
 
-double get_s0(data *s) {
-    // середина между звездами
-    double s_approx = normalize_angle((s->right_ascension_e + s->right_ascension_w) / 2.0);
+    for (int i = 0; i < N; i++) {
+        double x1 = i * step;
+        double x2 = (i + 1) * step;
 
-
-    // создаем узкое и безопасное окно в +-0.5 радиана (около 2 часов)
-    double a = s_approx - 0.1;
-    double b = s_approx + 0.1;
-
-    // проверяем условие Больцано-Коши
-    if (function(a, s) * function(b, s) >= 0.0) {
-        a = s_approx - 0.5;
-        b = s_approx + 0.5;
-
-        if (function(a, s) * function(b, s) >= 0.0) {
-            return 0;
+        // eсли знаки разные - корень существует по теорема Больцано-Коши
+        if (function(x1, s) * function(x2, s) < 0.0) {
+            *a = x1;
+            *b = x2;
+            *s0 = (x1 + x2) / 2.0;
+            return *s0;
         }
     }
-
-
-    double s0 = Bisection_method(function, a, b, s, 0);
-    return s0;
+    return 0.0;
 }
 
 
-void get_a_b(data *s, double *a, double *b) {
-    // середина между звездами
-    double s_approx = normalize_angle((s->right_ascension_e + s->right_ascension_w) / 2.0);
 
-
-    // создаем узкое и безопасное окно в +-0.5 радиана (около 2 часов)
-    *a = s_approx - 0.1;
-    *b = s_approx + 0.1;
-
-    // проверяем условие Больцано-Коши
-    if (function(*a, s) * function(*b, s) >= 0.0) {
-        *a = s_approx - 0.5;
-        *b = s_approx + 0.5;
-
-        if (function(*a, s) * function(*b, s) >= 0.0) {
-            *a = 0;
-            *b = 0;
-        }
-    }
-
-
-}
-
-
-double Sir_Isaac_Newton_method (double (*function)(double, data*),
-                                double (*d_function)(double, data*),
-                                double s0, data *s) {
-
-    double d_function1 = d_function(s0, s);
-    if (d_function1 == 0) return s0;
+double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_function)(double, data*), double s0, data *s) {
+    double x = s0;
     printf("Iteration of Newton_method\n");
-    double function1 = function(s0, s);
-    double x = s0 - function1/d_function1;
-    printf("%.15le\n", x);
+    double start = get_time();
+    double time_limit = 15.0;
 
-    while (fabs(x - s0) > 1e-15) {
-        d_function1 = d_function(x, s);
-        if (d_function1 == 0) return x;
+    while (1) {
+        double elapsed = get_time() - start;
+        if (elapsed > time_limit) {
+            printf("Shock\tand\tawe\n");
+            break;
+        }
 
-        function1 = function(x, s);
-        s0 = x;
-        x -= function1/d_function1;
-        printf("%.15le\n", x);
+
+        if (d_function(x, s) == 0.0) return x;
+
+        double x_next = x - (function(x, s) / d_function(x, s));
+
+        printf("%.15le\n", x_next);
+
+
+
+        if (fabs(x_next - x) <= DBL_EPSILON * fabs(x_next) || x_next == x) {
+            return x_next;
+        }
+        if (fabs(function(x_next, s)) >= fabs(function(x, s)) && fabs(x_next - x) < 1e-15) {
+            return x;
+        }
+
+        x = x_next;
     }
     return x;
-
 }
 
 
