@@ -12,13 +12,14 @@ int main(int argc, char *argv[]) {
     // Широта Петербурга
     // данные в градусах
     s.phi = 59.95;
-    // Западная звезда - Денеб из созвездия Лебедя
-    s.declination_w = 45.34;
-    // Восточная звезда - Сегин из созвездия Кассиопеи
-    s.declination_e = 45.52;
-    s.right_ascension_e = 28.75;
-    s.right_ascension_w = 310.45;
-    // Перевод в радианы
+
+    // Восточная — Капелла
+    s.right_ascension_e = 79.17;
+    s.declination_e = 46.00;
+
+    // Западная — Денеб
+    s.right_ascension_w = 310.72;
+    s.declination_w = 45.28;    // Перевод в радианы
 
     // s0 = 0;
 
