@@ -24,7 +24,7 @@ double Sir_Isaac_Newton_method (double (*function)(double, data*),
 double gets0(data *s, double *a, double *b, double *s0);
 
 
-void time_write (double s0);
+void time1_write (double s0);
 
 
 #endif //UNTITLED37_METHODS_H
