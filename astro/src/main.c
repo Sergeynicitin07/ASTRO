@@ -12,14 +12,13 @@ int main(int argc, char *argv[]) {
     // Широта Петербурга
     // данные в градусах
     s.phi = 59.95;
-
-    // Восточная — Капелла
-    s.right_ascension_e = 79.17;
-    s.declination_e = 46.00;
-
-    // Западная — Денеб
-    s.right_ascension_w = 310.72;
-    s.declination_w = 45.28;    // Перевод в радианы
+    // Западная звезда - Денеб из созвездия Лебедя
+    s.declination_w = 45.34;
+    // Восточная звезда - Альтаир
+    s.declination_e = 45.52;
+    s.right_ascension_e = 28.75;
+    s.right_ascension_w = 310.45;
+    // Перевод в радианы
 
     // s0 = 0;
 
@@ -43,11 +42,13 @@ int main(int argc, char *argv[]) {
     double x2 = Bisection_method(function, a, b, &s, 1);
     printf("Result of Newton_method:\n");
     printf("%.15le\n", x1);
-    time_write(x1);
+    time1_write(x1);
     printf("Result of Bisection_method:\n");
     printf("%.15le\n", x2);
-    time_write(x2);
-    
+    time1_write(x2);
+    printf("%a\n", x1);
+    printf("%a\n", x2);
+
 
     return 0;
 }
