@@ -5,20 +5,19 @@
 #include "methods.h"
 
 
-
-
 int main(int argc, char *argv[]) {
 
     data s;
+    // Задача работает для двух звезд на одном альмукантарате в плоскости 1-го вертикала
     // Широта Петербурга
     // данные в градусах
     s.phi = 59.95;
-    // Западная звезда - Капелла
-    s.declination_w = 45.97;
-    // Восточная звезда - Вега
-    s.declination_e = 38.78;
-    s.right_ascension_e = 279.23;
-    s.right_ascension_w = 79.17;
+    // Западная звезда - Денеб из созвездия Лебедя
+    s.declination_w = 45.34;
+    // Восточная звезда - Сегин из созвездия Кассиопеи
+    s.declination_e = 45.52;
+    s.right_ascension_e = 28.75;
+    s.right_ascension_w = 310.45;
     // Перевод в радианы
 
     // s0 = 0;
@@ -35,11 +34,10 @@ int main(int argc, char *argv[]) {
         s.right_ascension_w = atof(argv[5]);
 
     angles(&s);
-    double s0 = get_s0(&s);
+    double s0;
     double a;
     double b;
-    get_a_b(&s, &a, &b);
-
+    s0 = gets0(&s, &a, &b, &s0);
     double x1 = Sir_Isaac_Newton_method(function, d_function, s0, &s);
     double x2 = Bisection_method(function, a, b, &s, 1);
     printf("Result of Newton_method:\n");
@@ -48,6 +46,7 @@ int main(int argc, char *argv[]) {
     printf("Result of Bisection_method:\n");
     printf("%.15le\n", x2);
     time_write(x2);
+    
 
     return 0;
 }
