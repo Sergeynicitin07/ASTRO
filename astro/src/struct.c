@@ -9,12 +9,15 @@ const double d_2pi = {
 
 // если передали не радианы, а градусы
 void angles (data *s) {
+    // 1. Переводим в радианы
     s->phi = s->phi * M_PI / 180.0;
     s->right_ascension_w = s->right_ascension_w * M_PI / 180.0;
     s->right_ascension_e = s->right_ascension_e * M_PI / 180.0;
     s->declination_e = s->declination_e * M_PI / 180.0;
     s->declination_w = s->declination_w * M_PI / 180.0;
+
 }
+
 
 
 double normalize_angle (double angle) {
