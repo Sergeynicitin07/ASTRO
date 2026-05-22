@@ -9,9 +9,6 @@
 double function (double s0, data *s);
 
 
-void get_a_b(data *s, double *a, double *b);
-
-
 double Bisection_method(double (*function)(double, data*),
                         double a, double b, data *s, int i);
 
@@ -19,12 +16,12 @@ double Bisection_method(double (*function)(double, data*),
 double d_function (double s0, data *s);
 
 
-double get_s0(data *s);
-
-
 double Sir_Isaac_Newton_method (double (*function)(double, data*),
                                 double (*d_function)(double, data*),
                                 double s0, data *s);
+
+
+double gets0(data *s, double *a, double *b, double *s0);
 
 
 void time_write (double s0);
