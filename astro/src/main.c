@@ -46,8 +46,7 @@ int main(int argc, char *argv[]) {
     printf("Result of Bisection_method:\n");
     printf("%.15le\n", x2);
     time1_write(x2);
-    printf("%a\n", x1);
-    printf("%a\n", x2);
+
 
 
     return 0;
