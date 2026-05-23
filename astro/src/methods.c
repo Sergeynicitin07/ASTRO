@@ -90,7 +90,7 @@ double Bisection_method(double (*function)(double, data*), double a, double b, d
 
 double gets0(data *s, double *a, double *b, double *s0) {
     int N = 1000;
-
+    double data = (s->right_ascension_e + s->right_ascension_w) / 2;
     *s0 = (s->right_ascension_e + s->right_ascension_w) / 2;
     *a = (*s0 - 1);
     *b = (*s0 + 1);
