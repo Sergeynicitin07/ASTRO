@@ -108,13 +108,34 @@ double gets0(data *s, double *a, double *b, double *s0) {
 }
 
 
-double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_function)(double, data*), double s0, data *s, double *a, double *b) {
+// TENSOR METHOD (11.33)
+// страница 283 и тд
+// Nocedal.pdf
+double Sir_Isaac_Newton_method(double (*function)(double, data*),
+                            double (*d_function)(double, data*),
+                            double s0, data *s,  double *a, double *b)
+{
+    double x2 = Bisection_method(function, *a, *b, s, 1);
+
     double x = s0;
-    printf("Iteration of Newton_method\n");
+    double x_last;
+    double r;
+
+    printf("Iteration of Tensor_Newton_method\n");
     double start = get_time();
     double time_limit = 1.0;
+
     printf("%.15le\n", x);
-    double x2 = Bisection_method(function, *a, *b, s, 1);
+
+    double r_k = function(x, s);
+    double J_k = d_function(x, s);
+
+    if (fabs(J_k) < 1e-12) return x;
+
+    double p = -r_k / J_k; // обычные вычисления по базовому алгоритму Ньютона
+    double x_next = x + p;
+
+
     while (1) {
         double elapsed = get_time() - start;
         if (elapsed > time_limit) {
@@ -122,24 +143,47 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*), double (*d_fun
             break;
         }
 
-
-        if (fabs(d_function(x, s)) <= 1e-12) return x;
-
-        double x_next = x - (function(x, s) / d_function(x, s));
-
         printf("%.15le\n", x_next);
 
 
+        if (x_next == x) {
+            return x_next;
+        }
 
-        if (x_next != x) {
-            x = x_next;
 
-        } else return x_next;
+        x_last = x;
+        r = r_k;
+        x = x_next;
+
+        r_k = function(x, s);
+        J_k = d_function(x, s);
+
+        if (fabs(J_k) < 1e-14) break;
+
+        // (аппроксимация 2-й производной через одномерный тензер)
+        double dx = x_last - x;
+        double T_k = 0.0;
+
+        if (fabs(dx) > 1e-12) {
+            T_k = 2.0 * (r - r_k - J_k * dx) / (dx * dx);
+        }
+
+        // нужен корень 0.5*T_k*p^2 + J_k*p + r_k = 0
+        // считаем дискриминант
+        double dis = J_k * J_k - 2.0 * T_k * r_k;
+
+        if (dis >= 0.0 && fabs(T_k) > 1e-13) {
+            double sign_J = (J_k > 0) ? 1.0 : -1.0;
+            p = (-2.0 * r_k) / (J_k + sign_J * sqrt(dis));
+        } else {
+            p = -r_k / J_k;
+        }
         if (x == x2) return x;
 
+        x_next = x + p;
     }
 
-    return x;
+    return x_next;
 }
 
 
