@@ -113,9 +113,8 @@ double gets0(data *s, double *a, double *b, double *s0) {
 // Nocedal.pdf
 double Sir_Isaac_Newton_method(double (*function)(double, data*),
                             double (*d_function)(double, data*),
-                            double s0, data *s,  double *a, double *b)
+                            double s0, data *s,  double *a, double *b, double x2)
 {
-    double x2 = Bisection_method(function, *a, *b, s, 1);
 
     double x = s0;
     double x_last;
