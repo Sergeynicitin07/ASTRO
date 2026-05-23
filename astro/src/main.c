@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     double a;
     double b;
     s0 = gets0(&s, &a, &b, &s0);
-    double x1 = Sir_Isaac_Newton_method(function, d_function, s0, &s);
+    double x1 = Sir_Isaac_Newton_method(function, d_function, s0, &s, &a, &b);
     double x2 = Bisection_method(function, a, b, &s, 1);
     printf("Result of Newton_method:\n");
     printf("%.15le\n", x1);
