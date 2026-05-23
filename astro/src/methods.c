@@ -1,5 +1,7 @@
 #include "methods.h"
 #include "math.h"
+#include <float.h>
+
 #include "struct.h"
 #include <stdio.h>
 #ifdef _WIN32
@@ -177,9 +179,19 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         } else {
             p = -r_k / J_k;
         }
-        if (x == x2) return x;
+        if (fabs(p) <= fabs(x) * DBL_EPSILON) {
+            return x_next;
+        }
 
-        x_next = x + p;
+        if (x == x2) return x;
+        if (x_next < *a || x_next > *b)
+        {
+            x_next = *a + (*b - *a) / 2.0; }
+        else x_next = x + p;
+        if (x_next == x) {
+            return x_next;
+        }
+
     }
 
     return x_next;
