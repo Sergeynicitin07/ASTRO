@@ -94,6 +94,10 @@ double gets0(data *s, double *a, double *b, double *s0) {
     *s0 = (s->right_ascension_e + s->right_ascension_w) / 2;
     *a = (*s0 - 1);
     *b = (*s0 + 1);
+    double j1 = *s0;
+    double j2 = *s0;
+
+    int k = 0;
     double step = 2.0 * M_PI / N;
 
     for (int i = 0; i < N; i++) {
@@ -102,15 +106,23 @@ double gets0(data *s, double *a, double *b, double *s0) {
 
         // eсли знаки разные - корень существует по теорема Больцано-Коши
         if (function(x1, s) * function(x2, s) < 0.0) {
-            
+
             *a = x1;
             *b = x2;
-            *s0 = (x1 + x2) / 2.0;
-            if (*s0 < data + 0.5 && *s0 > data - 0.5)
-                return *s0;
+            if (k == 0) {
+                j1 = (x1 + x2) / 2.0;
+                k ++;
+
+            } else {
+                j2 = (x1 + x2) / 2.0;
+            }
+
         }
     }
-    return *s0;
+
+    if (j1 < data + 0.9 && j1 > data - 0.9) {
+        return *s0 = j1;
+    } else return *s0 = j2;
 }
 
 
@@ -118,8 +130,8 @@ double gets0(data *s, double *a, double *b, double *s0) {
 // страница 283 и тд
 // Nocedal.pdf
 double Sir_Isaac_Newton_method(double (*function)(double, data*),
-                            double (*d_function)(double, data*),
-                            double s0, data *s,  double *a, double *b, double x2)
+                               double (*d_function)(double, data*),
+                               double s0, data *s,  double *a, double *b, double x2)
 {
 
     double x = s0;
@@ -135,7 +147,8 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
     double r_k = function(x, s);
     double J_k = d_function(x, s);
 
-    if (fabs(J_k) < 1e-12) return x;
+
+    if (fabs(J_k) < 1e-14) return x;
 
     double p = -r_k / J_k; // обычные вычисления по базовому алгоритму Ньютона
     double x_next = x + p;
@@ -151,9 +164,6 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         printf("%.15le\n", x_next);
 
 
-        if (x_next == x) {
-            return x_next;
-        }
 
 
         x_last = x;
@@ -163,13 +173,15 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         r_k = function(x, s);
         J_k = d_function(x, s);
 
-        if (fabs(J_k) < 1e-14) break;
 
+
+
+        if (fabs(J_k) <= 1e-14) break;
         // (аппроксимация 2-й производной через одномерный тензер)
         double dx = x_last - x;
         double T_k = 0.0;
 
-        if (fabs(dx) > 1e-12) {
+        if (fabs(dx) > 1e-14) {
             T_k = 2.0 * (r - r_k - J_k * dx) / (dx * dx);
         }
 
@@ -177,9 +189,12 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         // считаем дискриминант
         double dis = J_k * J_k - 2.0 * T_k * r_k;
 
+
         if (dis >= 0.0 && fabs(T_k) > 1e-13) {
+
             double sign_J = (J_k > 0) ? 1.0 : -1.0;
             p = (-2.0 * r_k) / (J_k + sign_J * sqrt(dis));
+
         } else {
             p = -r_k / J_k;
         }
@@ -188,12 +203,19 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         }
 
         if (x == x2) return x;
-        
 
+        if (x_next < *a || x_next > *b)
+        {
+            x_next = *a + (*b - *a) / 2.0; }
+        else x_next = x + p;
+        if (x_next == x) {
+            return x_next;
+        }
     }
 
     return x_next;
 }
+
 
 
 void time1_write (double s0) {
