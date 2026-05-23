@@ -13,13 +13,20 @@ int main(int argc, char *argv[]) {
     // данные в градусах
     s.phi = 59.95;
 
-    // Восточная - Капелла
-    s.declination_e = 46.0;
-    s.right_ascension_e = 79.17;
 
-    // Западная - Денеб
-    s.declination_w = 45.28;
-    s.right_ascension_w = 310.72;
+
+    // Тета Близнецов
+
+    s.declination_e = 34.0;
+
+    s.right_ascension_e = 98.7;
+
+
+    // Тау Геркулеса
+
+    s.declination_w = 32.2;
+
+    s.right_ascension_w = 265.4;
     // Перевод в радианы
 
     // s0 = 0;
