@@ -90,7 +90,10 @@ double Bisection_method(double (*function)(double, data*), double a, double b, d
 
 double gets0(data *s, double *a, double *b, double *s0) {
     int N = 1000;
-    double data = (s->right_ascension_e + s->right_ascension_w) / 2;
+
+    *s0 = (s->right_ascension_e + s->right_ascension_w) / 2;
+    *a = (*s0 - 1);
+    *b = (*s0 + 1);
     double step = 2.0 * M_PI / N;
 
     for (int i = 0; i < N; i++) {
@@ -99,14 +102,14 @@ double gets0(data *s, double *a, double *b, double *s0) {
 
         // eсли знаки разные - корень существует по теорема Больцано-Коши
         if (function(x1, s) * function(x2, s) < 0.0) {
+            
             *a = x1;
             *b = x2;
             *s0 = (x1 + x2) / 2.0;
-            if (*s0 < data + 0.5 && *s0 > data - 0.5)
-                return *s0;
+            return *s0;
         }
     }
-    return 0.0;
+    return *s0;
 }
 
 
