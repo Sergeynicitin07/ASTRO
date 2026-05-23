@@ -16,9 +16,9 @@ double Bisection_method(double (*function)(double, data*),
 double d_function (double s0, data *s);
 
 
-double Sir_Isaac_Newton_method (double (*function)(double, data*),
-                                double (*d_function)(double, data*),
-                                double s0, data *s, double *a, double *b);
+double Sir_Isaac_Newton_method(double (*function)(double, data*),
+                               double (*d_function)(double, data*),
+                               double s0, data *s, double *a, double *b, double x2);
 
 
 
