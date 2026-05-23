@@ -120,7 +120,7 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
     double x_last;
     double r;
 
-    printf("Iteration of Tensor_Newton_method\n");
+    printf("Iteration of Newton_method\n");
     double start = get_time();
     double time_limit = 1.0;
 
