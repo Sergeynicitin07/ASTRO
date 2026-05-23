@@ -187,13 +187,7 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         }
 
         if (x == x2) return x;
-        if (x_next < *a || x_next > *b)
-        {
-            x_next = *a + (*b - *a) / 2.0; }
-        else x_next = x + p;
-        if (x_next == x) {
-            return x_next;
-        }
+        
 
     }
 
