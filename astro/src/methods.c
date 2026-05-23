@@ -106,7 +106,8 @@ double gets0(data *s, double *a, double *b, double *s0) {
             *a = x1;
             *b = x2;
             *s0 = (x1 + x2) / 2.0;
-            return *s0;
+            if (*s0 < data + 0.5 && *s0 > data - 0.5)
+                return *s0;
         }
     }
     return *s0;
