@@ -1,6 +1,5 @@
 #include "methods.h"
 #include "math.h"
-#include <float.h>
 
 #include "struct.h"
 #include <stdio.h>
@@ -167,9 +166,6 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
             *b = x;
         }
 
-        if (fabs(*b - *a) <= fabs(x) * DBL_EPSILON) {
-            break;
-        }
 
         double x_next;
         if (fabs(df) == 0.0) {
