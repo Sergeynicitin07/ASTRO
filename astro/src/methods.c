@@ -137,6 +137,7 @@ double gets0(data *s, double *a, double *b, double *s0) {
     }
 }
 
+// по пути rtsafe - страница 460. Root Finding and Nonlinear Sets of Equations.
 double Sir_Isaac_Newton_method(double (*function)(double, data*),
                                double (*d_function)(double, data*),
                                double s0, data *s,  double *a, double *b, double x2)
