@@ -95,7 +95,10 @@ double gets0(data *s, double *a, double *b, double *s0) {
     *b = (*s0 + 1);
     double j1 = *s0;
     double j2 = *s0;
-    double a1, a2, b1, b2;
+    double a1 = *s0 - (M_PI / 2);
+    double a2 = *s0 - (M_PI / 2);
+    double b1 = *s0 + (M_PI / 2);
+    double b2 = *s0 + (M_PI / 2);
 
     int k = 0;
     double step = 2.0 * M_PI / N;
@@ -133,8 +136,6 @@ double gets0(data *s, double *a, double *b, double *s0) {
         return *s0 = j2;
     }
 }
-
-
 
 double Sir_Isaac_Newton_method(double (*function)(double, data*),
                                double (*d_function)(double, data*),
