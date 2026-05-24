@@ -208,8 +208,15 @@ void time1_write (double s0) {
     double seconds = (total_minutes - minutes) * 60.0;
     hours = hours % 24;
     minutes = minutes % 60;
+    if (seconds == 60) {
+        seconds = 0;
+        minutes ++;
+    }if (minutes == 60) {
+        minutes = 0;
+        hours ++;
+    }
+    if (hours == 24) hours = 0;
 
     printf("%02d : hour\t%02d : min\t%05.2f : sec\n", hours, minutes, seconds);
 
 }
-
