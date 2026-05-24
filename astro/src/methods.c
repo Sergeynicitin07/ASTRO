@@ -198,7 +198,6 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
 
 
 void time1_write (double s0) {
-    // если корень отрицательный, сделае м его положительным, используя тригонометрический период 2PI
     s0 = normalize_angle(s0);
     double total_hours = s0 * (12.0 / M_PI);
 
@@ -209,18 +208,20 @@ void time1_write (double s0) {
 
     double seconds = (total_minutes - minutes) * 60.0;
 
-    hours = hours % 24;
-    minutes = minutes % 60;
-    if (fabs(seconds - 60.0) > 0 && fabs(seconds - 60.0) < 1e-5) {
-        seconds = 0.0;
-        minutes ++;
+    seconds = round(seconds * 100.0) / 100.0;
+
+    if (seconds >= 60.0) {
+        seconds -= 60.0;
+        minutes++;
     }
+
     if (minutes >= 60) {
         minutes -= 60;
-        hours ++;
+        hours++;
     }
-    if (hours >= 24) hours = 0;
+
+    hours = hours % 24;
 
     printf("%02d : hour\t%02d : min\t%05.2f : sec\n", hours, minutes, seconds);
-
 }
+
