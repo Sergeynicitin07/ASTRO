@@ -209,14 +209,15 @@ void time1_write (double s0) {
 
     hours = hours % 24;
     minutes = minutes % 60;
-    if (fabs(seconds - 60.0) > 0) {
+    if (fabs(seconds - 60.0) > 0 && fabs(seconds - 60.0) < 1e-5) {
         seconds = 0.0;
         minutes ++;
-    }if (minutes >= 60) {
+    }
+    if (minutes >= 60) {
         minutes -= 60;
         hours ++;
     }
-    if (hours == 24) hours = 0;
+    if (hours >= 24) hours = 0;
 
     printf("%02d : hour\t%02d : min\t%05.2f : sec\n", hours, minutes, seconds);
 
