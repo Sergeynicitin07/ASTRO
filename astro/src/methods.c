@@ -145,6 +145,8 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
 
     double x = s0;
     double f_a = function(*a, s); // значение функции на левом краю отрезка, откуда родом стартовая точка s0
+    if (f_a == 0) return *a;
+    if (function(*b, s) == 0) return *b;
 
     printf("Iteration of Newton_method\n");
     double start = get_time();
