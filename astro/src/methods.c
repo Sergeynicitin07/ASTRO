@@ -160,7 +160,7 @@ double Sir_Isaac_Newton_method(double (*function)(double, data*),
         double f = function(x, s);
         double df = d_function(x, s);
 
-        if (f * f_a > 0.0) {
+        if (signbit(f) == signbit(f_a)) {
             *a = x;
             f_a = f;
         } else {
