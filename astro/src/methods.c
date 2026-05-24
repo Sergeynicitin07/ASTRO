@@ -76,7 +76,7 @@ double Bisection_method(double (*function)(double, data*), double a, double b, d
             break;
         }
 
-        if (function(a, s) * function(c, s) > 0.0) {
+        if (signbit(function(a, s)) ==  signbit(function(c, s))) {
             a = c;
         } else {
             b = c;
