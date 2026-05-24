@@ -206,13 +206,14 @@ void time1_write (double s0) {
     int minutes = (int)total_minutes;
 
     double seconds = (total_minutes - minutes) * 60.0;
+
     hours = hours % 24;
     minutes = minutes % 60;
-    if (seconds == 60) {
-        seconds = 0;
+    if (fabs(seconds - 60.0) > 0) {
+        seconds = 0.0;
         minutes ++;
-    }if (minutes == 60) {
-        minutes = 0;
+    }if (minutes >= 60) {
+        minutes -= 60;
         hours ++;
     }
     if (hours == 24) hours = 0;
