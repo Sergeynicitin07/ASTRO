@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
     printf("Result of Bisection_method:\n");
     printf("%.15le\n", x2);
     time1_write(x2);
+    printf("difference of two methods: %.15le\n", x2 - x1);
 
 
 
